@@ -1,0 +1,41 @@
+name: Deploy Node.js App to AWS EC2
+
+on:
+  push:
+    branches:
+      - auto
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy to EC2 via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            echo "🚀 Connected to EC2"
+
+            cd /home/ubuntu/doc/boradoc || exit 1
+
+            echo "📦 Pulling latest code"
+            git pull origin master
+
+            echo "🎨 Frontend install"
+            cd /home/ubuntu/doc/boradoc/frontend || exit 1
+            npm install
+
+            echo "⚙️ Backend install"
+            cd /home/ubuntu/doc/boradoc/backend || exit 1
+            npm install
+
+            echo "♻️ Restarting PM2"
+            pm2 restart all
+
+            echo "✅ Deployment completed successfully"
