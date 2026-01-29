@@ -29,7 +29,15 @@ const s3Client = new S3Client({
 
 /* ---------------- EXPRESS ---------------- */
 const app = express();
-app.use(cors());
+// app.use(cors());
+app.use(
+    cors({
+        origin: "http://174.129.157.255:8080",
+        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        allowedHeaders: ["Content-Type", "Authorization"],
+        credentials: true,
+    })
+);
 app.use(express.json());
 
 const upload = multer({ storage: multer.memoryStorage() });
