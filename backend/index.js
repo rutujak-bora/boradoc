@@ -179,16 +179,7 @@ app.delete('/api/invoices/:region/:id', async (req, res) => {
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Serve static files from the React frontend app
-app.use(express.static(path.join(__dirname, '../frontend/dist')));
 
-// Anything that doesn't match the above, send back index.html
-app.get('*', (req, res) => {
-    if (req.originalUrl.startsWith('/api')) {
-        return res.status(404).json({ error: 'Not Found' });
-    }
-    res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
-});
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
