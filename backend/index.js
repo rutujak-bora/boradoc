@@ -37,6 +37,14 @@ const DubaiInvoice = dubaiConn.model('Invoice', InvoiceModel.schema);
 const getModelByRegion = (region) => {
     return region === 'russia' ? RussiaInvoice : DubaiInvoice;
 };
+// Routes
+app.get('/api/hello', async (req, res) => {
+    try {
+        res.json({ message: 'Hello World' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
 
 // Routes
 app.get('/api/invoices/:region', async (req, res) => {
@@ -139,7 +147,7 @@ app.delete('/api/invoices/:region/:id', async (req, res) => {
         // Collect all file keys
         const allDocs = [...(invoice.shipmentDocuments || []), ...(invoice.logisticBills || [])];
         console.log(`[DELETE] Found ${allDocs.length} documents to delete from S3.`);
-        
+
         for (const doc of allDocs) {
             if (doc.filePath) {
                 console.log(`[DELETE] Deleting file from S3: ${doc.filePath}`);
@@ -163,10 +171,10 @@ app.delete('/api/invoices/:region/:id', async (req, res) => {
 
         // Delete invoice from DB
         const deletedInvoice = await Model.findOneAndDelete({ id });
-        if(deletedInvoice) {
-             console.log('[DELETE] Invoice deleted from DB successfully.');
+        if (deletedInvoice) {
+            console.log('[DELETE] Invoice deleted from DB successfully.');
         } else {
-             console.log('[DELETE] Failed to delete invoice from DB (findOneAndDelete returned null).');
+            console.log('[DELETE] Failed to delete invoice from DB (findOneAndDelete returned null).');
         }
 
         res.json({ message: 'Invoice and associated files deleted successfully' });
@@ -179,16 +187,7 @@ app.delete('/api/invoices/:region/:id', async (req, res) => {
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Serve static files from the React frontend app
-app.use(express.static(path.join(__dirname, '../frontend/dist')));
 
-// Anything that doesn't match the above, send back index.html
-app.get('*', (req, res) => {
-    if (req.originalUrl.startsWith('/api')) {
-        return res.status(404).json({ error: 'Not Found' });
-    }
-    res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
-});
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
