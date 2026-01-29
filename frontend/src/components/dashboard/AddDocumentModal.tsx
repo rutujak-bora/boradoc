@@ -75,7 +75,8 @@ export function AddDocumentModal({ open, onOpenChange, editInvoice }: AddDocumen
   };
 
   const addLogisticBillEntry = () => {
-    setLogisticBills(prev => [...prev, { id: crypto.randomUUID(), documentName: '', file: null }]);
+    const id = Math.random().toString(36).substring(2, 11);
+    setLogisticBills(prev => [...prev, { id, documentName: '', file: null }]);
   };
 
   const updateLogisticBill = (id: string, field: 'documentName' | 'file', value: string | File | null) => {
